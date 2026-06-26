@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchReminders();
   startStatusPolling();
 
+  // View switching navigation
+  document.getElementById('btn-show-form').addEventListener('click', () => showView('form'));
+  document.getElementById('btn-show-list').addEventListener('click', () => showView('list'));
+
   // Tab switching logic
   document.getElementById('tab-active').addEventListener('click', (e) => {
     switchTab('active', e.target);
@@ -36,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (response.ok) {
       document.getElementById('reminder-form').reset();
+      showView('list'); // Automatically transition back to reminders list
       fetchReminders();
     }
   });
@@ -44,6 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-disconnect-wa').addEventListener('click', disconnectWhatsApp);
   document.getElementById('btn-initialize-wa').addEventListener('click', reconnectWhatsApp);
 });
+
+function showView(viewName) {
+  const listView = document.getElementById('view-list');
+  const formView = document.getElementById('view-form');
+  if (viewName === 'form') {
+    listView.classList.add('hidden');
+    formView.classList.remove('hidden');
+  } else {
+    formView.classList.add('hidden');
+    listView.classList.remove('hidden');
+  }
+}
 
 function switchTab(tab, element) {
   currentTab = tab;
@@ -88,7 +105,10 @@ async function fetchReminders() {
           </div>
         </div>
         <div class="card-actions">
-          ${currentTab === 'active' ? `<button onclick="deleteReminder('${r.id}')" title="Delete Reminder">❌</button>` : ''}
+          ${currentTab === 'active' ? `
+            <button class="complete-btn" onclick="completeReminder('${r.id}')" title="Mark as Completed">✔️</button>
+            <button class="delete-btn" onclick="deleteReminder('${r.id}')" title="Delete Reminder">❌</button>
+          ` : ''}
         </div>
       `;
       listContainer.appendChild(card);
@@ -110,6 +130,11 @@ function getTypeEmoji(type) {
 // Global scope delete helper
 window.deleteReminder = async function(id) {
   await fetch(`${REMINDERS_URL}/${id}`, { method: 'DELETE' });
+  fetchReminders();
+};
+
+window.completeReminder = async function(id) {
+  await fetch(`${REMINDERS_URL}/${id}/complete`, { method: 'PUT' });
   fetchReminders();
 };
 

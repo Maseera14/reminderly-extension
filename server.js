@@ -190,6 +190,17 @@ app.delete('/api/reminders/:id', (req, res) => {
     res.json({ success: true });
 });
 
+app.put('/api/reminders/:id/complete', (req, res) => {
+    const reminderIndex = reminders.findIndex(r => r.id === req.params.id);
+    if (reminderIndex !== -1) {
+        reminders[reminderIndex].status = 'Done';
+        saveReminders();
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: "Reminder not found" });
+    }
+});
+
 
 // ⏱️ CRON JOB (Checks every minute)
 cron.schedule('* * * * *', () => {

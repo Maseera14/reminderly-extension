@@ -87,48 +87,69 @@
         </div>
       </section>
 
-      <!-- Right Column: Reminders & Form -->
+      <!-- Right Column: Reminders (Switchable Views) -->
       <section class="panel panel-reminders">
-        <div class="panel-header">
-          <h3>Create Reminder</h3>
-          <span class="panel-subtitle">Schedule a new notification</span>
+        <!-- VIEW 1: REMINDERS LIST VIEW -->
+        <div id="view-list" class="view-container">
+          <div class="panel-header flex-header">
+            <div>
+              <h3>Your Reminders</h3>
+              <span class="panel-subtitle">Manage scheduled notifications</span>
+            </div>
+            <button class="action-btn btn-primary add-new-btn" id="btn-show-form">
+              <span class="plus-icon">+</span> Add New
+            </button>
+          </div>
+
+          <!-- Reminders List Section -->
+          <div class="reminders-list-section no-border-top">
+            <div class="list-tabs">
+              <button id="tab-active" class="tab-btn active">Upcoming Reminders</button>
+              <button id="tab-completed" class="tab-btn">Completed</button>
+            </div>
+
+            <div id="reminders-list" class="reminders-list">
+              <!-- Dynamic Reminders List -->
+            </div>
+          </div>
         </div>
 
-        <form id="reminder-form" class="reminder-form">
-          <div class="form-group">
-            <label for="title">Event / Task Title</label>
-            <input type="text" id="title" placeholder="e.g., Ali's Birthday Gift / Code Review" required>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group flex-1">
-              <label for="type">Reminder Type</label>
-              <select id="type" required>
-                <option value="Birthday">🎂 Birthday</option>
-                <option value="Meeting">💼 Meeting</option>
-                <option value="Event">🎉 Event / Party</option>
-                <option value="Alert">🔔 General Alert</option>
-              </select>
+        <!-- VIEW 2: ADD NEW REMINDER FORM VIEW -->
+        <div id="view-form" class="view-container hidden">
+          <div class="panel-header flex-header">
+            <div>
+              <h3>Create Reminder</h3>
+              <span class="panel-subtitle">Schedule a new notification</span>
             </div>
-            <div class="form-group flex-2">
-              <label for="datetime">Trigger Date & Time</label>
-              <input type="datetime-local" id="datetime" required>
+            <button class="action-btn btn-secondary back-btn" id="btn-show-list">
+              ← Back to List
+            </button>
+          </div>
+
+          <form id="reminder-form" class="reminder-form">
+            <div class="form-group">
+              <label for="title">Event / Task Title</label>
+              <input type="text" id="title" placeholder="e.g., Ali's Birthday Gift / Code Review" required>
             </div>
-          </div>
 
-          <button type="submit" class="action-btn btn-primary submit-btn">Set Upcoming Reminder</button>
-        </form>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label for="type">Reminder Type</label>
+                <select id="type" required>
+                  <option value="Birthday">🎂 Birthday</option>
+                  <option value="Meeting">💼 Meeting</option>
+                  <option value="Event">🎉 Event / Party</option>
+                  <option value="Alert">🔔 General Alert</option>
+                </select>
+              </div>
+              <div class="form-group flex-2">
+                <label for="datetime">Trigger Date & Time</label>
+                <input type="datetime-local" id="datetime" required>
+              </div>
+            </div>
 
-        <!-- Reminders List Section -->
-        <div class="reminders-list-section">
-          <div class="list-tabs">
-            <button id="tab-active" class="tab-btn active">Upcoming Reminders</button>
-            <button id="tab-completed" class="tab-btn">Completed</button>
-          </div>
-
-          <div id="reminders-list" class="reminders-list">
-            <!-- Dynamic Reminders List -->
-          </div>
+            <button type="submit" class="action-btn btn-primary submit-btn">Set Reminder</button>
+          </form>
         </div>
       </section>
     </main>
