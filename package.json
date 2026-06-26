@@ -1,13 +1,17 @@
 {
   "name": "reminderly-extension",
   "version": "1.0.0",
-  "description": "",
-  "main": "popup.js",
+  "description": "Smart WhatsApp reminder bot with dashboard",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["whatsapp", "reminders", "bot"],
+  "author": "Maseera14",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.3.0",
@@ -15,7 +19,6 @@
     "express": "^5.2.1",
     "node-cron": "^4.5.0",
     "qrcode-terminal": "^0.12.0",
-    "twilio": "^6.0.2",
     "whatsapp-web.js": "^1.34.7"
   }
 }

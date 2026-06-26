@@ -39,15 +39,21 @@ let qrCodeData = null;
 let clientInfo = null;
 
 const whatsapp = new Client({
-    authStrategy: new LocalAuth(), // Session storage
+    authStrategy: new LocalAuth(),
     puppeteer: { 
         headless: true,
-        executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
         args: [
-            '--no-sandbox', 
+            '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-gpu'
+            '--disable-gpu',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-extensions',
+            '--disable-software-rasterizer',
+            '--disable-background-networking',
+            '--disable-default-apps'
         ]
     }
 });
