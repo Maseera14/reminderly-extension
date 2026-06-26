@@ -64,9 +64,10 @@ async function fetchReminders() {
     const filtered = reminders.filter(r => r.status === (currentTab === 'completed' ? 'Done' : 'Pending'));
 
     if (filtered.length === 0) {
+      const tabLabel = currentTab === 'active' ? 'upcoming' : 'completed';
       listContainer.innerHTML = `
         <div style="text-align:center; padding: 40px 20px; color: var(--text-muted);">
-          <p style="font-size: 14px;">No ${currentTab} reminders found.</p>
+          <p style="font-size: 14px;">No ${tabLabel} reminders found.</p>
         </div>
       `;
       return;

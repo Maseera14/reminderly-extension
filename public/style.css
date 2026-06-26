@@ -1,25 +1,28 @@
 /* -------------------------------------------------------------
  * REMINDERLY DASHBOARD STYLE SYSTEM
+ * Theme: Professional White & Coral Glassmorphism
  * ------------------------------------------------------------- */
 
-/* Custom Properties / Tokens */
+/* Custom Properties / Design Tokens */
 :root {
-  --bg-primary: #090d16;
-  --bg-secondary: #101625;
-  --accent-primary: #6366f1; /* Indigo */
-  --accent-primary-glow: rgba(99, 102, 241, 0.4);
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --accent-primary: #ff6f61; /* Vibrant Coral */
+  --accent-primary-hover: #e55e51;
+  --accent-primary-glow: rgba(255, 111, 97, 0.2);
   --accent-success: #10b981; /* Emerald Green */
-  --accent-success-glow: rgba(16, 185, 129, 0.3);
+  --accent-success-glow: rgba(16, 185, 129, 0.12);
   --accent-danger: #ef4444; /* Rose Red */
-  --accent-danger-glow: rgba(239, 68, 68, 0.3);
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --accent-danger-glow: rgba(239, 68, 68, 0.12);
+  --text-main: #0f172a; /* Deep Slate (almost black) */
+  --text-muted: #64748b; /* Medium Slate (secondary text) */
+  --border-color: rgba(15, 23, 42, 0.06);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.6);
   --glass-blur: blur(16px);
-  --shadow-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-lg: 0 10px 30px -8px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 15px -3px rgba(15, 23, 42, 0.03);
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Reset & Global Styles */
@@ -41,7 +44,7 @@ body {
   align-items: flex-start;
 }
 
-/* Premium Radial Background Glows */
+/* Premium Light Background Glows */
 .glass-bg {
   position: fixed;
   top: 0;
@@ -49,9 +52,9 @@ body {
   right: 0;
   bottom: 0;
   z-index: -1;
-  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
-              var(--bg-primary);
+  background: radial-gradient(circle at 10% 20%, rgba(255, 111, 97, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 45%),
+              #f8fafc;
   background-attachment: fixed;
 }
 
@@ -96,7 +99,7 @@ body {
   font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  background: linear-gradient(135deg, var(--text-main) 0%, var(--accent-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -127,25 +130,34 @@ body {
 }
 
 .status-connecting {
-  background: rgba(99, 102, 241, 0.1);
-  color: #a5b4fc;
-  border-color: rgba(99, 102, 241, 0.2);
+  background: rgba(255, 111, 97, 0.08);
+  color: var(--accent-primary);
+  border-color: rgba(255, 111, 97, 0.15);
 }
-.status-connecting .status-dot { background-color: var(--accent-primary); }
+.status-connecting .status-dot { 
+  background-color: var(--accent-primary); 
+  box-shadow: 0 0 8px var(--accent-primary);
+}
 
 .status-disconnected {
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  color: var(--accent-danger);
+  border-color: rgba(239, 68, 68, 0.15);
 }
-.status-disconnected .status-dot { background-color: var(--accent-danger); }
+.status-disconnected .status-dot { 
+  background-color: var(--accent-danger); 
+  box-shadow: 0 0 8px var(--accent-danger);
+}
 
 .status-connected {
-  background: rgba(16, 185, 129, 0.1);
-  color: #6ee7b7;
-  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--accent-success);
+  border-color: rgba(16, 185, 129, 0.15);
 }
-.status-connected .status-dot { background-color: var(--accent-success); }
+.status-connected .status-dot { 
+  background-color: var(--accent-success); 
+  box-shadow: 0 0 8px var(--accent-success);
+}
 
 /* Dashboard Grid */
 .dashboard-grid {
@@ -194,8 +206,8 @@ body {
 
 /* WhatsApp Connection Card States */
 .connection-card {
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px dashed var(--border-color);
+  background: rgba(15, 23, 42, 0.01);
+  border: 1px dashed rgba(15, 23, 42, 0.08);
   border-radius: 18px;
   padding: 30px 20px;
   min-height: 320px;
@@ -224,7 +236,7 @@ body {
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(0, 0, 0, 0.05);
   border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -279,7 +291,7 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #4f46e5;
+  background-color: var(--accent-primary-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px var(--accent-primary-glow);
 }
@@ -289,9 +301,9 @@ body {
 }
 
 .btn-danger {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background-color: rgba(239, 68, 68, 0.06);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.1);
 }
 
 .btn-danger:hover {
@@ -306,11 +318,12 @@ body {
   background: white;
   padding: 15px;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 #qrcode img {
@@ -327,7 +340,7 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.01);
   border: 1px solid var(--border-color);
   padding: 15px;
   border-radius: 14px;
@@ -338,7 +351,7 @@ body {
 
 .user-avatar {
   font-size: 24px;
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(255, 111, 97, 0.08);
   width: 44px;
   height: 44px;
   display: flex;
@@ -393,8 +406,8 @@ label {
 input[type="text"],
 input[type="datetime-local"],
 select {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
   padding: 14px;
   border-radius: 12px;
   color: var(--text-main);
@@ -407,8 +420,8 @@ select {
 input:focus,
 select:focus {
   border-color: var(--accent-primary);
-  background: rgba(255, 255, 255, 0.04);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 111, 97, 0.15);
 }
 
 .submit-btn {
@@ -427,7 +440,7 @@ select:focus {
 /* Tabs */
 .list-tabs {
   display: flex;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(15, 23, 42, 0.04);
   border-radius: 12px;
   padding: 4px;
   gap: 4px;
@@ -450,7 +463,7 @@ select:focus {
 .tab-btn.active {
   background: var(--accent-primary);
   color: white;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 10px var(--accent-primary-glow);
 }
 
 /* List container */
@@ -471,30 +484,32 @@ select:focus {
   background: transparent;
 }
 .reminders-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.08);
   border-radius: 99px;
 }
 .reminders-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.15);
 }
 
 /* Reminder Card styling */
 .reminder-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-left: 4px solid var(--accent-primary);
   border-radius: 16px;
   padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: var(--transition-smooth);
+  box-shadow: var(--shadow-md);
   animation: slideUp 0.3s ease-out forwards;
 }
 
 .reminder-card:hover {
-  background: rgba(255, 255, 255, 0.04);
   transform: translateX(4px);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-details {
@@ -518,7 +533,7 @@ select:focus {
 }
 
 .badge-type {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.04);
   padding: 2px 8px;
   border-radius: 99px;
   font-size: 11px;
@@ -526,9 +541,9 @@ select:focus {
 }
 
 .card-actions button {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.15);
-  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  color: #ef4444;
   width: 32px;
   height: 32px;
   display: flex;
@@ -548,7 +563,8 @@ select:focus {
 
 /* Completed modifier */
 .reminder-card.completed {
-  opacity: 0.6;
+  border-left-color: var(--accent-success);
+  opacity: 0.75;
 }
 .reminder-card.completed:hover {
   transform: none;
