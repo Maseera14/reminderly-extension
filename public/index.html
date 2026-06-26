@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminderly Dashboard | Smart WhatsApp Reminders</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Local QR Code Library (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="glass-bg"></div>
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-logo">
+        <span class="logo-icon">🪸</span>
+        <div class="logo-text">
+          <h1>Reminderly</h1>
+          <p>Automated WhatsApp Reminders</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="status-pill status-connecting" id="global-status">
+          <span class="status-dot animate-pulse"></span>
+          <span id="global-status-text">Connecting Server...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="dashboard-grid">
+      <!-- Left Column: WhatsApp Connectivity -->
+      <section class="panel panel-whatsapp">
+        <div class="panel-header">
+          <h3>WhatsApp Connection</h3>
+          <span class="panel-subtitle">Link your device to send alerts</span>
+        </div>
+
+        <div class="connection-card" id="wa-connection-card">
+          <!-- State: Connecting -->
+          <div class="state-view state-loading" id="state-loading">
+            <div class="spinner"></div>
+            <p>Initializing WhatsApp Client...</p>
+            <span class="subtext">This might take a moment.</span>
+          </div>
+
+          <!-- State: Disconnected -->
+          <div class="state-view state-disconnected hidden" id="state-disconnected">
+            <div class="alert-icon">⚠️</div>
+            <h4>WhatsApp is Offline</h4>
+            <p>Your reminders cannot be sent while WhatsApp is offline.</p>
+            <button class="action-btn btn-primary" id="btn-initialize-wa">Connect WhatsApp</button>
+          </div>
+
+          <!-- State: QR Scanner -->
+          <div class="state-view state-qr hidden" id="state-qr">
+            <h4>Scan QR Code</h4>
+            <p class="qr-info">Open WhatsApp on your phone, tap <b>Linked Devices</b>, and scan this code:</p>
+            <div class="qr-wrapper">
+              <div id="qrcode"></div>
+            </div>
+            <span class="subtext">Waiting for device connection...</span>
+          </div>
+
+          <!-- State: Connected -->
+          <div class="state-view state-connected hidden" id="state-connected-view">
+            <div class="success-icon animate-pulse">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h4>Linked Successfully</h4>
+            <div class="user-badge" id="user-badge">
+              <div class="user-avatar">💬</div>
+              <div class="user-details">
+                <span class="user-name" id="wa-pushname">Loading...</span>
+                <span class="user-phone" id="wa-phone">Loading...</span>
+              </div>
+            </div>
+            <button class="action-btn btn-danger" id="btn-disconnect-wa">Disconnect Device</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Reminders & Form -->
+      <section class="panel panel-reminders">
+        <div class="panel-header">
+          <h3>Create Reminder</h3>
+          <span class="panel-subtitle">Schedule a new notification</span>
+        </div>
+
+        <form id="reminder-form" class="reminder-form">
+          <div class="form-group">
+            <label for="title">Event / Task Title</label>
+            <input type="text" id="title" placeholder="e.g., Ali's Birthday Gift / Code Review" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="type">Reminder Type</label>
+              <select id="type" required>
+                <option value="Birthday">🎂 Birthday</option>
+                <option value="Meeting">💼 Meeting</option>
+                <option value="Event">🎉 Event / Party</option>
+                <option value="Alert">🔔 General Alert</option>
+              </select>
+            </div>
+            <div class="form-group flex-2">
+              <label for="datetime">Trigger Date & Time</label>
+              <input type="datetime-local" id="datetime" required>
+            </div>
+          </div>
+
+          <button type="submit" class="action-btn btn-primary submit-btn">Set Active Reminder</button>
+        </form>
+
+        <!-- Reminders List Section -->
+        <div class="reminders-list-section">
+          <div class="list-tabs">
+            <button id="tab-active" class="tab-btn active">Active Reminders</button>
+            <button id="tab-completed" class="tab-btn">Completed</button>
+          </div>
+
+          <div id="reminders-list" class="reminders-list">
+            <!-- Dynamic Reminders List -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

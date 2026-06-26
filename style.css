@@ -1,0 +1,137 @@
+:root {
+  --coral: #FF6F61;
+  --coral-hover: #E65A4C;
+  --white: #FFFFFF;
+  --bg-light: #FAFAFA;
+  --text-dark: #333333;
+  --gray: #E0E0E0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 360px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--white);
+  color: var(--text-dark);
+}
+
+.app-container {
+  padding: 15px;
+}
+
+header h1 {
+  color: var(--coral);
+  margin: 0 0 15px 0;
+  font-size: 24px;
+  text-align: center;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid var(--gray);
+  margin-bottom: 15px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #777;
+  transition: all 0.3s;
+}
+
+.tab-btn.active {
+  color: var(--coral);
+  border-bottom: 3px solid var(--coral);
+  margin-bottom: -2px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-light);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--gray);
+  margin-bottom: 15px;
+}
+
+input, select {
+  padding: 8px;
+  border: 1px solid var(--gray);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--coral);
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row * {
+  flex: 1;
+}
+
+.submit-btn {
+  background-color: var(--coral);
+  color: var(--white);
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  background-color: var(--coral-hover);
+}
+
+.list-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.card {
+  background: white;
+  border-left: 4px solid var(--coral);
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card.completed {
+  border-left-color: #4CAF50;
+  opacity: 0.7;
+}
+
+.card-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+}
+
+.card-info span {
+  font-size: 11px;
+  color: #666;
+}
+
+.card-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}

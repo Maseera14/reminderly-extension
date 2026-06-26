@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Reminderly 🪸</h1>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+      <button id="tab-active" class="tab-btn active">Active</button>
+      <button id="tab-completed" class="tab-btn">Completed</button>
+    </div>
+
+    <!-- Form Container -->
+    <form id="reminder-form">
+      <input type="text" id="title" placeholder="Event Title (e.g., Ali's Birthday)" required>
+      <div class="form-row">
+        <select id="type">
+          <option value="Birthday">🎂 Birthday</option>
+          <option value="Meeting">💼 Meeting</option>
+          <option value="Event">🎉 Event/Party</option>
+        </select>
+        <input type="datetime-local" id="datetime" required>
+      </div>
+      <button type="submit" class="submit-btn">Set Reminder</button>
+    </form>
+
+    <!-- Reminders List -->
+    <div id="reminders-list" class="list-container"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
