@@ -5,12 +5,17 @@
 
 /* ---------- GLOBAL TOKENS ---------- */
 :root {
-  /* ── Base Surfaces ── */
-  --bg:          #080A0F;          /* jet black page bg        */
-  --bg-2:        #0B0E15;
-  --surface:     #0F1420;          /* navy-tinted card surface  */
-  --surface-2:   #141928;
-  --surface-3:   #1A2030;
+  /* ── Base Surfaces (Jet Black) ── */
+  --bg:          #080808;          /* pure jet black page bg    */
+  --bg-2:        #0A0A0A;
+  --surface:     #0F0F0F;          /* jet black card surface    */
+  --surface-2:   #141414;
+  --surface-3:   #1A1A1A;
+
+  /* ── Sidebar (Dark Blue) ── */
+  --sidebar-bg:    #0C1830;        /* dark navy blue sidebar    */
+  --sidebar-bg-2:  #0F2040;
+  --sidebar-border:#1A2E4A;
 
   /* ── Borders ── */
   --border:        rgba(255,255,255,.06);
@@ -96,15 +101,14 @@ svg { display: block; flex-shrink: 0; }
 .bg-mesh {
   position: fixed; inset: 0; z-index: -1;
   background:
-    radial-gradient(ellipse 60% 40% at 85% 10%, rgba(46,111,181,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 45% 35% at 10% 85%, rgba(14,26,48,.6) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 40% at 0% 50%, rgba(12,24,48,.7) 0%, transparent 55%),
     var(--bg);
 }
 /* Subtle dot pattern */
 .bg-mesh::after {
   content: '';
   position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255,255,255,.018) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -117,8 +121,8 @@ svg { display: block; flex-shrink: 0; }
 .sidebar {
   width: var(--sidebar-w);
   flex-shrink: 0;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   display: flex;
   flex-direction: column;
   padding: 26px 18px;
@@ -141,7 +145,7 @@ svg { display: block; flex-shrink: 0; }
 .brand {
   display: flex; align-items: center; gap: 12px;
   padding: 6px 4px 22px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--sidebar-border);
 }
 .brand-icon { font-size: 28px; animation: float 5s ease-in-out infinite; }
 .brand-name {
@@ -158,8 +162,8 @@ svg { display: block; flex-shrink: 0; }
 
 /* WA Card */
 .wa-card {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
+  background: var(--sidebar-bg-2);
+  border: 1px solid var(--sidebar-border);
   border-radius: var(--radius);
   padding: 22px 16px;
   display: flex;
@@ -236,8 +240,8 @@ svg { display: block; flex-shrink: 0; }
   display: flex; align-items: center; gap: 8px;
   font-size: 12px; font-weight: 500;
   padding: 8px 14px; border-radius: 99px;
-  border: 1px solid var(--border);
-  background: var(--surface-2); color: var(--text-2);
+  border: 1px solid var(--sidebar-border);
+  background: var(--sidebar-bg-2); color: var(--text-2);
   align-self: center; transition: all var(--dur) var(--ease);
 }
 .status-dot {
@@ -251,7 +255,7 @@ svg { display: block; flex-shrink: 0; }
 /* Sidebar Footer */
 .sidebar-footer {
   margin-top: auto; padding-top: 16px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--sidebar-border);
   display: flex; flex-direction: column; gap: 3px;
   font-size: 11px; color: var(--text-3);
 }
