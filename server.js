@@ -6,7 +6,8 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const app = express();
-app.use(cors());
+// Allow requests from Vercel frontend (and any origin)
+app.use(cors({ origin: '*', methods: ['GET','POST','PUT','DELETE'] }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -235,4 +236,5 @@ cron.schedule('* * * * *', () => {
     });
 });
 
-app.listen(3000, () => console.log('🚀 Reminderly Server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Reminderly Server running on port ${PORT}`));

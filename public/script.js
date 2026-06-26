@@ -1,4 +1,7 @@
-const API_BASE = window.location.origin;
+// API_BASE: uses Railway URL from config.js if set, else same-origin (local dev)
+const API_BASE = (window.REMINDERLY_API && window.REMINDERLY_API.trim() !== '')
+  ? window.REMINDERLY_API.replace(/\/$/, '')
+  : window.location.origin;
 const REMINDERS_URL  = `${API_BASE}/api/reminders`;
 const WA_STATUS_URL  = `${API_BASE}/api/whatsapp/status`;
 const WA_DISC_URL    = `${API_BASE}/api/whatsapp/disconnect`;
