@@ -124,8 +124,9 @@ function renderReminders(list) {
   }
 
   list.forEach((r, i) => {
+    const typeSlug = (r.type || 'alert').toLowerCase();
     const card = document.createElement('div');
-    card.className = `reminder-card${currentTab === 'completed' ? ' completed' : ''}`;
+    card.className = `reminder-card type-${typeSlug}${currentTab === 'completed' ? ' completed' : ''}`;
     card.style.animationDelay = `${i * 0.05}s`;
 
     const dateStr = new Date(r.datetime).toLocaleString('en-US', {
@@ -133,12 +134,12 @@ function renderReminders(list) {
       hour: '2-digit', minute: '2-digit'
     });
 
-    const emoji = { Birthday: '🎂', Meeting: '💼', Event: '🎉', Alert: '🔔' }[r.type] || '🔔';
+    const emoji = { birthday: '🎂', meeting: '💼', event: '🎉', alert: '🔔' }[typeSlug] || '🔔';
 
     card.innerHTML = `
       <div class="card-top">
         <span class="type-badge">${emoji} ${r.type}</span>
-        <span class="card-date">⏱ ${dateStr}</span>
+        <span class="card-date">${dateStr}</span>
       </div>
       <div class="card-title">${r.title}</div>
       ${currentTab === 'active' ? `
