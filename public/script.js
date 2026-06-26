@@ -1,256 +1,238 @@
 const API_BASE = window.location.origin;
-const REMINDERS_URL = `${API_BASE}/api/reminders`;
-const WA_STATUS_URL = `${API_BASE}/api/whatsapp/status`;
-const WA_DISCONNECT_URL = `${API_BASE}/api/whatsapp/disconnect`;
+const REMINDERS_URL  = `${API_BASE}/api/reminders`;
+const WA_STATUS_URL  = `${API_BASE}/api/whatsapp/status`;
+const WA_DISC_URL    = `${API_BASE}/api/whatsapp/disconnect`;
 
-let currentTab = 'active';
-let lastQrData = null;
-let qrCodeInstance = null;
+let currentTab    = 'active';
+let lastQrData    = null;
+let qrCodeInst    = null;
 
+/* ============================================================
+   INIT
+   ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
-  // Initial Fetches
   fetchReminders();
-  startStatusPolling();
+  startPolling();
 
-  // View switching navigation
-  document.getElementById('btn-show-form').addEventListener('click', () => showView('form'));
-  document.getElementById('btn-show-list').addEventListener('click', () => showView('list'));
+  // View navigation
+  document.getElementById('btn-show-form').addEventListener('click', ()  => showView('form'));
+  document.getElementById('btn-show-list').addEventListener('click', ()  => showView('list'));
+  document.getElementById('btn-cancel-form').addEventListener('click', () => showView('list'));
 
-  // Tab switching logic
-  document.getElementById('tab-active').addEventListener('click', (e) => {
-    switchTab('active', e.target);
-  });
-  document.getElementById('tab-completed').addEventListener('click', (e) => {
-    switchTab('completed', e.target);
-  });
+  // Tabs
+  document.getElementById('tab-active').addEventListener('click',    e => switchTab('active',    e.currentTarget));
+  document.getElementById('tab-completed').addEventListener('click', e => switchTab('completed', e.currentTarget));
 
-  // Form submission
-  document.getElementById('reminder-form').addEventListener('submit', async (e) => {
+  // Form submit
+  document.getElementById('reminder-form').addEventListener('submit', async e => {
     e.preventDefault();
-    
-    const title = document.getElementById('title').value;
-    const type = document.getElementById('type').value;
-    const datetime = document.getElementById('datetime').value;
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Setting…';
 
-    const response = await fetch(REMINDERS_URL, {
+    const res = await fetch(REMINDERS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, type, datetime })
+      body: JSON.stringify({
+        title:    document.getElementById('title').value,
+        type:     document.getElementById('type').value,
+        datetime: document.getElementById('datetime').value
+      })
     });
 
-    if (response.ok) {
-      document.getElementById('reminder-form').reset();
-      showView('list'); // Automatically transition back to reminders list
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Set Reminder`;
+
+    if (res.ok) {
+      e.target.reset();
+      showView('list');
       fetchReminders();
     }
   });
 
-  // WhatsApp Button listeners
-  document.getElementById('btn-disconnect-wa').addEventListener('click', disconnectWhatsApp);
-  document.getElementById('btn-initialize-wa').addEventListener('click', reconnectWhatsApp);
+  // WhatsApp buttons
+  document.getElementById('btn-disconnect-wa').addEventListener('click', disconnectWA);
+  document.getElementById('btn-initialize-wa').addEventListener('click', reconnectWA);
 });
 
-function showView(viewName) {
-  const listView = document.getElementById('view-list');
-  const formView = document.getElementById('view-form');
-  if (viewName === 'form') {
-    listView.classList.add('hidden');
-    formView.classList.remove('hidden');
+/* ============================================================
+   VIEW SWITCHING
+   ============================================================ */
+function showView(v) {
+  const listEl    = document.getElementById('view-list');
+  const formEl    = document.getElementById('view-form');
+  const addBtn    = document.getElementById('btn-show-form');
+  const backBtn   = document.getElementById('btn-show-list');
+  const pageTitle = document.getElementById('page-title');
+  const pageSub   = document.getElementById('page-sub');
+
+  if (v === 'form') {
+    listEl.classList.add('hidden');
+    formEl.classList.remove('hidden');
+    addBtn.classList.add('hidden');
+    backBtn.classList.remove('hidden');
+    pageTitle.textContent = 'New Reminder';
+    pageSub.textContent   = 'Fill in the details below';
   } else {
-    formView.classList.add('hidden');
-    listView.classList.remove('hidden');
+    formEl.classList.add('hidden');
+    listEl.classList.remove('hidden');
+    backBtn.classList.add('hidden');
+    addBtn.classList.remove('hidden');
+    pageTitle.textContent = 'Your Reminders';
+    pageSub.textContent   = 'All your upcoming scheduled alerts';
+    fetchReminders();
   }
 }
 
-function switchTab(tab, element) {
+/* ============================================================
+   TABS
+   ============================================================ */
+function switchTab(tab, el) {
   currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  element.classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
   fetchReminders();
 }
 
+/* ============================================================
+   REMINDERS
+   ============================================================ */
 async function fetchReminders() {
   try {
-    const response = await fetch(REMINDERS_URL);
-    const reminders = await response.json();
-    
-    const listContainer = document.getElementById('reminders-list');
-    listContainer.innerHTML = '';
-
-    // Filter based on tab
-    const filtered = reminders.filter(r => r.status === (currentTab === 'completed' ? 'Done' : 'Pending'));
-
-    if (filtered.length === 0) {
-      const tabLabel = currentTab === 'active' ? 'upcoming' : 'completed';
-      listContainer.innerHTML = `
-        <div style="text-align:center; padding: 40px 20px; color: var(--text-muted);">
-          <p style="font-size: 14px;">No ${tabLabel} reminders found.</p>
-        </div>
-      `;
-      return;
-    }
-
-    filtered.forEach(r => {
-      const card = document.createElement('div');
-      card.className = `reminder-card ${currentTab === 'completed' ? 'completed' : ''}`;
-      
-      const dateStr = new Date(r.datetime).toLocaleString();
-      
-      card.innerHTML = `
-        <div class="card-details">
-          <h4>${r.title}</h4>
-          <div class="card-meta">
-            <span class="badge-type">${getTypeEmoji(r.type)} ${r.type}</span>
-            <span>⏱️ ${dateStr}</span>
-          </div>
-        </div>
-        <div class="card-actions">
-          ${currentTab === 'active' ? `
-            <button class="complete-btn" onclick="completeReminder('${r.id}')" title="Mark as Completed">✔️</button>
-            <button class="delete-btn" onclick="deleteReminder('${r.id}')" title="Delete Reminder">❌</button>
-          ` : ''}
-        </div>
-      `;
-      listContainer.appendChild(card);
-    });
+    const res      = await fetch(REMINDERS_URL);
+    const all      = await res.json();
+    const filtered = all.filter(r => r.status === (currentTab === 'completed' ? 'Done' : 'Pending'));
+    renderReminders(filtered);
   } catch (err) {
-    console.error("Backend server error fetching reminders:", err);
+    console.error('Error fetching reminders:', err);
   }
 }
 
-function getTypeEmoji(type) {
-  switch (type) {
-    case 'Birthday': return '🎂';
-    case 'Meeting': return '💼';
-    case 'Event': return '🎉';
-    default: return '🔔';
+function renderReminders(list) {
+  const grid = document.getElementById('reminders-list');
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    const label = currentTab === 'active' ? 'upcoming' : 'completed';
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">${currentTab === 'active' ? '📭' : '✅'}</div>
+        <h4>No ${label} reminders</h4>
+        <p>${currentTab === 'active' ? 'Click "+ Add Reminder" to schedule your first alert.' : 'Completed reminders will appear here.'}</p>
+      </div>`;
+    return;
   }
+
+  list.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = `reminder-card${currentTab === 'completed' ? ' completed' : ''}`;
+    card.style.animationDelay = `${i * 0.05}s`;
+
+    const dateStr = new Date(r.datetime).toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    const emoji = { Birthday: '🎂', Meeting: '💼', Event: '🎉', Alert: '🔔' }[r.type] || '🔔';
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="type-badge">${emoji} ${r.type}</span>
+        <span class="card-date">⏱ ${dateStr}</span>
+      </div>
+      <div class="card-title">${r.title}</div>
+      ${currentTab === 'active' ? `
+        <div class="card-actions">
+          <button class="card-btn complete" onclick="completeReminder('${r.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            Mark Done
+          </button>
+          <button class="card-btn delete" onclick="deleteReminder('${r.id}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Remove
+          </button>
+        </div>` : ''}
+    `;
+    grid.appendChild(card);
+  });
 }
 
-// Global scope delete helper
-window.deleteReminder = async function(id) {
+window.completeReminder = async id => {
+  await fetch(`${REMINDERS_URL}/${id}/complete`, { method: 'PUT' });
+  fetchReminders();
+};
+window.deleteReminder = async id => {
   await fetch(`${REMINDERS_URL}/${id}`, { method: 'DELETE' });
   fetchReminders();
 };
 
-window.completeReminder = async function(id) {
-  await fetch(`${REMINDERS_URL}/${id}/complete`, { method: 'PUT' });
-  fetchReminders();
-};
-
-/* -------------------------------------------------------------
- * WHATSAPP CLIENT STATUS POLLING & LOGIC
- * ------------------------------------------------------------- */
-function startStatusPolling() {
-  // Poll immediately and then every 2.5 seconds
-  pollStatus();
-  setInterval(pollStatus, 2500);
+/* ============================================================
+   WHATSAPP STATUS POLLING
+   ============================================================ */
+function startPolling() {
+  poll();
+  setInterval(poll, 2500);
 }
 
-async function pollStatus() {
+async function poll() {
   try {
-    const response = await fetch(WA_STATUS_URL);
-    const data = await response.json();
-    
+    const res  = await fetch(WA_STATUS_URL);
+    const data = await res.json();
     updateWAUI(data.state, data.qr, data.info);
-  } catch (err) {
-    console.error("Error polling WhatsApp status:", err);
-    updateGlobalStatus('disconnected', 'Server Offline');
+  } catch {
+    setChip('disconnected', 'Server Offline');
   }
 }
 
 function updateWAUI(state, qr, info) {
-  const loadingView = document.getElementById('state-loading');
-  const disconnectedView = document.getElementById('state-disconnected');
-  const qrView = document.getElementById('state-qr');
-  const connectedView = document.getElementById('state-connected-view');
-  
-  // Hide all state views by default
-  const views = [loadingView, disconnectedView, qrView, connectedView];
-  views.forEach(v => v.classList.add('hidden'));
+  const $ = id => document.getElementById(id);
 
-  // Update Global Header Status & View Panel
+  ['state-loading','state-qr','state-disconnected','state-connected-view']
+    .forEach(id => $(id).classList.add('hidden'));
+
   if (state === 'CONNECTING') {
-    updateGlobalStatus('connecting', 'Connecting...');
-    loadingView.classList.remove('hidden');
-    lastQrData = null; // Clear QR cache
-  } 
-  else if (state === 'DISCONNECTED') {
-    updateGlobalStatus('disconnected', 'WhatsApp Offline');
-    disconnectedView.classList.remove('hidden');
-    lastQrData = null; // Clear QR cache
-  } 
-  else if (state === 'QR_CODE') {
-    updateGlobalStatus('connecting', 'Waiting for scan...');
-    qrView.classList.remove('hidden');
-    
+    $('state-loading').classList.remove('hidden');
+    setChip('connecting', 'Connecting…');
+  } else if (state === 'QR_CODE') {
+    $('state-qr').classList.remove('hidden');
+    setChip('connecting', 'Scan QR Code');
     if (qr && qr !== lastQrData) {
       lastQrData = qr;
-      renderQRCode(qr);
+      const wrap = $('qrcode');
+      wrap.innerHTML = '';
+      qrCodeInst = new QRCode(wrap, { text: qr, width: 170, height: 170, colorDark: '#0f1428', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
     }
-  } 
-  else if (state === 'CONNECTED') {
-    updateGlobalStatus('connected', 'WhatsApp Active');
-    connectedView.classList.remove('hidden');
+  } else if (state === 'DISCONNECTED') {
+    $('state-disconnected').classList.remove('hidden');
+    setChip('disconnected', 'WhatsApp Offline');
     lastQrData = null;
-    
+  } else if (state === 'CONNECTED') {
+    $('state-connected-view').classList.remove('hidden');
+    setChip('connected', 'WhatsApp Active');
+    lastQrData = null;
     if (info) {
-      document.getElementById('wa-pushname').textContent = info.pushname || 'Connected User';
-      document.getElementById('wa-phone').textContent = info.wid ? `+${info.wid.user}` : 'WhatsApp Active';
+      $('wa-pushname').textContent = info.pushname || 'Connected';
+      $('wa-phone').textContent    = info.wid ? `+${info.wid.user}` : 'WhatsApp Active';
     }
   }
 }
 
-function updateGlobalStatus(className, text) {
-  const pill = document.getElementById('global-status');
-  const statusText = document.getElementById('global-status-text');
-  
-  pill.className = `status-pill status-${className}`;
-  statusText.textContent = text;
+function setChip(cls, txt) {
+  const chip = document.getElementById('global-status');
+  chip.className = `status-chip ${cls}`;
+  document.getElementById('global-status-text').textContent = txt;
 }
 
-function renderQRCode(qrText) {
-  const container = document.getElementById('qrcode');
-  container.innerHTML = ''; // Clear previous QR
-  
-  qrCodeInstance = new QRCode(container, {
-    text: qrText,
-    width: 200,
-    height: 200,
-    colorDark : "#0f172a",
-    colorLight : "#ffffff",
-    correctLevel : QRCode.CorrectLevel.H
-  });
-}
-
-async function disconnectWhatsApp() {
+async function disconnectWA() {
   const btn = document.getElementById('btn-disconnect-wa');
-  const originalText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Disconnecting...';
-  
-  try {
-    await fetch(WA_DISCONNECT_URL, { method: 'POST' });
-  } catch (err) {
-    console.error("Error disconnecting WhatsApp:", err);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
-  }
+  btn.disabled = true; btn.textContent = 'Disconnecting…';
+  try { await fetch(WA_DISC_URL, { method: 'POST' }); } catch {}
+  btn.disabled = false; btn.textContent = 'Disconnect';
 }
 
-async function reconnectWhatsApp() {
+async function reconnectWA() {
   const btn = document.getElementById('btn-initialize-wa');
-  btn.disabled = true;
-  btn.textContent = 'Connecting...';
-  
-  try {
-    // Triggers disconnect check or initializes client
-    await fetch(WA_DISCONNECT_URL, { method: 'POST' });
-  } catch (err) {
-    console.error("Error triggering reconnection:", err);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Connect WhatsApp';
-  }
+  btn.disabled = true; btn.textContent = 'Connecting…';
+  try { await fetch(WA_DISC_URL, { method: 'POST' }); } catch {}
+  btn.disabled = false; btn.textContent = 'Connect';
 }
